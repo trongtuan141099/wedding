@@ -3,6 +3,14 @@
 /uploads/*
 !/uploads/.htaccess
 *.zip
+*.zip.sha256
+/releases/
+/previews/
+*.log
+.env
+.env.*
+.DS_Store
+Thumbs.db
 __pycache__/
 /tests/qa-data/
 /tests/test-runtime-*/

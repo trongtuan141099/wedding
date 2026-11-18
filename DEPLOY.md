@@ -1,48 +1,65 @@
-# Đưa thiệp cưới lên server / cPanel
+# Triển khai trên cPanel
 
-Nếu bản đã upload báo HTTP 500 và các tệp có quyền 0666, dùng **wedding-hosting-fix.zip**
-và làm theo **HOSTING-FIX.md**. Gói sửa giữ nguyên state, mật khẩu và ảnh tải lên.
+## Yêu cầu
 
-## Cài mới
+Apache 2.4/LiteSpeed áp dụng `.htaccess`, PHP tối thiểu 8.0; nên dùng phiên bản từ 8.2 còn được hosting hỗ trợ.
+Cần session, JSON, fileinfo; GD/FreeType để tạo ảnh chia sẻ có chữ. PHP cần ghi được data và uploads.
+Giới hạn upload 16M, POST 20M có trong `.user.ini`; dùng MultiPHP INI Editor nếu cần.
+Bật HTTPS và ghi log, giữ display_errors=Off.
 
-1. Chọn PHP 8.2 trở lên, bật extensions `fileinfo`, `json`, `session`.
-2. Upload `wedding-invitation-cpanel.zip` vào `public_html` hoặc thư mục website.
-3. Giải nén ngay trong thư mục website. `index.php`, `admin.php`, `.htaccess` phải nằm
-   cùng cấp, không có thêm thư mục bọc ngoài. Bật hiển thị tệp ẩn trong File Manager.
-4. Gói mới có metadata UNIX: các tệp 0644, thư mục 0755. Kiểm tra sau giải nén, đặc biệt
-   không để tệp PHP ở quyền 0666 vì PHP handler của hosting có thể từ chối chạy.
-   Cho tài khoản PHP quyền ghi `data/` và `uploads/`; thông thường 0750/0755 tùy hosting.
-   Không dùng quyền 0777.
-5. Mở `https://tenmien/admin.php`, tự nhập và xác nhận mật khẩu quản trị lần đầu.
-   Không cần Terminal hoặc setup.php. Sau này đổi tại Tài khoản & mật khẩu.
-   Nếu đã có mật khẩu thì trang chỉ hiện đăng nhập, không cho tạo lại công khai.
-6. Bật HTTPS / AutoSSL. Giữ `display_errors=Off`; bật ghi log lỗi tại hosting.
-7. Bật GD / FreeType để tạo ảnh chia sẻ 1200×630 có tên và ngày cưới.
-   Trong Chia sẻ Zalo & Facebook, đặt URL công khai HTTPS đúng tên miền/thư mục.
-   Kiểm tra giới hạn PHP: `upload_max_filesize=16M`, `post_max_size=20M`.
-   `.user.ini` đã kèm cấu hình; dùng MultiPHP INI Editor nếu hosting không áp dụng tệp này.
-8. Kiểm tra thiệp, phát nhạc, tải QR, gửi thử RSVP, yêu cầu xe và duyệt lời chúc.
-   Kiểm tra URL `/data/state.php` trả 403 qua web trước khi nhận khách thật.
-9. Chia sẻ link từ dashboard trên tên miền thật. Xóa bản ZIP khỏi thư mục web sau khi
-   giải nén và lưu một bản ngoại tuyến.
+## Clone trực tiếp từ GitHub
 
-## Gói ZIP chứa gì?
+1. Xác nhận Document Root tại cPanel → Domains. Nếu là `/home/tthubvna/public_html`, repository
+   `/home/tthubvna/public_html/wedding` tương ứng `https://tt-hub.io.vn/wedding/`.
+2. Clone đúng branch. index.php, admin.php, .htaccess nằm ngay trong wedding, không thêm thư mục bọc.
+3. **Đặt chính thư mục wedding thành 0755**, các thư mục tài nguyên 0755, tệp mã nguồn 0644.
+   Git không lưu quyền thư mục. Có Terminal thì chạy bằng tài khoản cPanel sở hữu dự án:
 
-- Mã nguồn mới nhất, gồm nút Lưu QR và các chỉnh sửa giao diện đã yêu cầu.
-- Nội dung/cấu hình của các thiệp hiện có, đường dẫn thiệp, ảnh, nhạc và QR cục bộ
-  đang được tham chiếu. Các URL HTTPS bên ngoài được giữ nguyên, không tải hộ.
-- Các tệp `.htaccess` bảo vệ và hướng dẫn triển khai.
+   ```bash
+   cd /home/tthubvna/public_html/wedding
+   bash tools/fix-permissions.sh
+   ```
 
-Gói **không chứa** mật khẩu quản trị, session, RSVP, danh sách link khách cá nhân,
-lời chúc hoặc log. Các danh sách này bắt đầu trống trên server mới. Nếu cần các link
-khách đã gửi tiếp tục hoạt động, cần một đợt di chuyển dữ liệu riêng có sao lưu bảo mật.
-Link thiệp chung theo slug được giữ nguyên khi đưa lên tên miền mới.
+   Dữ liệu riêng dùng 0750/0600, session 0700/0600. Nếu PHP dùng tài khoản khác, nhờ hosting cấu hình
+   owner/group để đọc/ghi; không cấp 0777. Script không đổi owner hoặc thư mục cha của dự án.
+4. Bật Show Hidden Files; xác nhận .htaccess, .user.ini, data/.htaccess và uploads/.htaccess có mặt.
+5. Mở `/wedding/admin.php`, tạo mật khẩu lần đầu và lưu nội dung thiệp. Không cần setup.php.
+   Clone mới dùng defaults.php; Git không kèm dữ liệu hoặc ảnh tải lên từ máy phát triển.
+6. Trong Chia sẻ Zalo & Facebook, đặt URL công khai `https://tt-hub.io.vn/wedding`.
+7. Kiểm tra đăng nhập, upload, thiệp, nhạc sau bấm mở, tải QR, RSVP/xe và duyệt lời chúc.
+   `/wedding/data/state.php` phải bị chặn qua web.
 
-## Nếu server đã có website đang dùng
+Clone nằm trực tiếp trong thư mục web có thể phục vụ ngay, không cần .cpanel.yml.
+Clone ngoài thư mục web cần một bước triển khai riêng sang Document Root.
 
-Sao lưu trước. Chỉ cập nhật các tệp mã nguồn và tài nguyên cần thiết; **không ghi đè**
-`data/state.php`, `data/credentials.php` hoặc thư mục `uploads/` đang có dữ liệu thật.
-`data/state.php` trong ZIP là dữ liệu khởi tạo cho **cài mới**.
+## Cập nhật bằng Git
 
-Gói dành cho Apache 2.4 / LiteSpeed có hỗ trợ `.htaccess`. Nếu dùng Nginx, phải cấu hình
-chặn truy cập `/data/` và thực thi script trong uploads theo hướng dẫn README.md.
+Sao lưu data, uploads và tài nguyên riêng. Trong Git Version Control → Manage, dùng **Update from Remote**.
+Hoặc dùng `git pull --ff-only` trong Terminal. Kiểm tra lại quyền và chức năng sau cập nhật.
+
+data/* và uploads/* được loại khỏi Git, ngoại trừ .htaccess; cập nhật thông thường giữ nguyên nội dung,
+mật khẩu và dữ liệu khách. Không dùng `git clean -fdx`, reset hoặc giải nén bản cài mới đè dữ liệu thật.
+Nếu từng commit dữ liệu riêng, .gitignore không xóa chúng khỏi lịch sử GitHub.
+
+## Dùng ZIP
+
+Tạo bằng `python tools/package-release.py --php /duong/dan/php`. Kết quả trong releases/:
+
+- wedding-invitation-cpanel.zip: cài mới, có cấu hình công khai và tài nguyên cục bộ được tham chiếu.
+- wedding-hosting-fix.zip: cập nhật mã, không có state, mật khẩu hoặc ảnh tải lên.
+- *.sha256: mã kiểm tra gói.
+
+Cả hai không chứa session, RSVP, lời chúc hoặc danh sách khách. Giải nén vào đúng thư mục web.
+ZIP ghi quyền UNIX 0644/0755; vẫn kiểm tra quyền thư mục đích đã tồn tại. Xóa ZIP khỏi web sau giải nén.
+Không ghi đè data/state.php của bản cài mới lên site đang dùng. Di chuyển dữ liệu riêng cần sao lưu riêng.
+
+## Khi gặp lỗi
+
+- 404/403: kiểm tra Document Root, Repository Path, quyền wedding và thư mục cha, .htaccess ở cả
+  public_html và wedding, rồi xem cPanel → Metrics → Errors.
+- 500: kiểm tra log PHP, phiên bản PHP, quyền/owner data và uploads; tệp PHP không dùng 0666.
+- Không lưu/upload: kiểm tra quyền ghi và giới hạn POST/upload.
+- Preview cũ: kiểm tra ảnh công khai, URL chia sẻ và làm mới cache nền tảng.
+
+Nginx cần cấu hình riêng để chặn data, tests, tools, tệp ẩn/nội bộ và thực thi script trong uploads;
+.htaccess không có hiệu lực trên Nginx.

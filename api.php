@@ -28,6 +28,7 @@ try {
   if(!is_dir(__DIR__.'/uploads'))mkdir(__DIR__.'/uploads',0755,true);
   $path='uploads/'.bin2hex(random_bytes(16)).'.'.$ext;
   if(!move_uploaded_file($f['tmp_name'],__DIR__.'/'.$path))throw new RuntimeException('Upload write failed');
+  chmod(__DIR__.'/'.$path,0644);
   json_response(['url'=>$path]);
  }
  if((int)($_SERVER['CONTENT_LENGTH']??0)>500000)throw new InvalidArgumentException('Dữ liệu quá lớn.');

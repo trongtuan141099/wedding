@@ -1,5 +1,6 @@
 """Build cPanel releases with explicit UNIX permissions, regardless of build OS.
 Run from any directory: python tools/package-release.py [--php /path/to/php]
+Archives and checksums are written to the ignored releases/ directory.
 The full package contains public invitation settings/media. The repair package
 contains application files only and never contains state or uploaded media.
 """
@@ -38,10 +39,10 @@ for config in configs:
 
 source_names = ['index.php', 'admin.php', 'style.css', 'script.js', 'studio.css',
                 'studio.js', 'experience.js', 'invitation.css', 'invitation.js',
-                'studio-api.php', 'bootstrap.php', 'api.php', 'defaults.php', 'setup.php',
+                'studio-api.php', 'bootstrap.php', 'api.php', 'defaults.php',
                 'account.php', 'social.php', 'social-image.php',
                 'assets/fonts/PlayfairDisplay.ttf', 'assets/fonts/OFL.txt',
-                '.htaccess', '.user.ini', 'README.md', 'DEPLOY.md', 'HOSTING-FIX.md',
+                '.htaccess', '.user.ini', 'README.md', 'DEPLOY.md',
                 'data/.htaccess', 'uploads/.htaccess']
 source = {name: (ROOT / name).read_bytes() for name in source_names}
 public_files = set(refs) | {p.relative_to(ROOT).as_posix()
@@ -56,7 +57,9 @@ for name in sorted(public_files):
 full['data/state.php'] = b'<?php exit; ?>\n' + result.stdout
 
 def write_release(filename, files):
-    destination = ROOT / filename
+    output = ROOT / 'releases'
+    output.mkdir(exist_ok=True)
+    destination = output / filename
     temporary = destination.with_suffix('.tmp.zip')
     now = datetime.datetime.now().timetuple()[:6]
     directories = set()

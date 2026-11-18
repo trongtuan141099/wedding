@@ -1,4 +1,4 @@
-"""Start an isolated PHP server, run both suites, and remove only its test data."""
+"""Start an isolated PHP server, run all suites, and remove only its test data."""
 import os, pathlib, shutil, socket, subprocess, tempfile, time, urllib.request
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PHP=shutil.which('php') or 'D:/xampp/php/php.exe'
