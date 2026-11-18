@@ -32,7 +32,8 @@ Hoặc dùng `php -S 127.0.0.1:8088` trong thư mục dự án; server này ch�
 | `index.php`, `admin.php` | Thiệp và quản trị |
 | `api.php`, `studio-api.php` | API form, khách mời, upload, RSVP và lời chúc |
 | `bootstrap.php`, `account.php` | Lưu trữ JSON, validation, session, CSRF, mật khẩu |
-| `defaults.php` | Nội dung khởi tạo cho bản clone mới |
+| `defaults.php` | Lược đồ và giá trị dự phòng |
+| `public-template.php` | Nội dung thiệp đã đồng bộ cho bản clone mới |
 | `social.php`, `social-image.php` | Metadata và ảnh chia sẻ |
 | Các tệp CSS/JS ở gốc | Form, preview, bố cục và hiệu ứng |
 | `assets/` | Ảnh, nhạc, font và favicon mẫu |
@@ -40,6 +41,13 @@ Hoặc dùng `php -S 127.0.0.1:8088` trong thư mục dự án; server này ch�
 | `tests/`, `tools/` | Kiểm tra, đóng gói, sửa quyền |
 
 ## Lưu trữ và vận hành
+
+Bản clone mới và ZIP cùng dùng `public-template.php`. Ảnh/QR được snapshot vào assets thay vì phụ thuộc uploads.
+Để đưa nội dung local đã lưu vào Git, chạy `php tools/export-template.php`, rồi commit public-template.php và
+các assets/template-* mới. Lệnh không xuất khách mời, RSVP, lời chúc hoặc mật khẩu.
+Sau khi pull trên hosting đã có dữ liệu, chạy `php tools/sync-template.php` để áp dụng nội dung này.
+Lệnh sao lưu state trong data/backups, giữ slug hiện tại, khách, phản hồi, lời chúc và thông tin đăng nhập.
+Việc pull mã đơn thuần không tự ghi đè các chỉnh sửa quản trị trên hosting.
 
 `data/state.php` chứa JSON sau tiền tố PHP exit, được chặn thêm bằng `.htaccess`.
 Mật khẩu hash trong `data/credentials.php`, session trong `data/sessions/`.

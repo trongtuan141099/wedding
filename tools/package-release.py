@@ -21,7 +21,7 @@ parser.add_argument('--php', default=shutil.which('php') or 'D:/xampp/php/php.ex
 args = parser.parse_args()
 php = r'''<?php
 require 'bootstrap.php';
-$root=store_state();
+$root=initial_state();
 $empty=['revision'=>0,'responses'=>[],'wishes'=>[],'rates'=>[],'invitees'=>[]];
 $seed=array_merge($empty,['config'=>validate_config($root['config']),'cardMeta'=>$root['cardMeta'],'cards'=>[]]);
 foreach($root['cards'] as $id=>$card)$seed['cards'][$id]=array_merge($empty,['config'=>validate_config($card['config'])]);
@@ -39,21 +39,22 @@ for config in configs:
 
 source_names = ['index.php', 'admin.php', 'style.css', 'script.js', 'studio.css',
                 'studio.js', 'experience.js', 'invitation.css', 'invitation.js',
-                'studio-api.php', 'bootstrap.php', 'api.php', 'defaults.php',
+                'studio-api.php', 'bootstrap.php', 'api.php', 'defaults.php', 'public-template.php',
                 'account.php', 'social.php', 'social-image.php',
                 'assets/fonts/PlayfairDisplay.ttf', 'assets/fonts/OFL.txt',
                 '.htaccess', '.user.ini', 'README.md', 'DEPLOY.md',
+                'tools/.htaccess', 'tools/sync-template.php', 'tools/fix-permissions.sh',
                 'data/.htaccess', 'uploads/.htaccess']
 source = {name: (ROOT / name).read_bytes() for name in source_names}
 public_files = set(refs) | {p.relative_to(ROOT).as_posix()
                           for p in (ROOT / 'assets').rglob('*') if p.is_file()}
-full = dict(source)
 for name in sorted(public_files):
     path = (ROOT / name).resolve()
     assert path.is_relative_to(ROOT.resolve()), 'Media outside workspace'
     if not path.is_file():
         raise SystemExit('Missing referenced media: ' + name)
-    full[name] = path.read_bytes()
+    source[name] = path.read_bytes()
+full = dict(source)
 full['data/state.php'] = b'<?php exit; ?>\n' + result.stdout
 
 def write_release(filename, files):

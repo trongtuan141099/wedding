@@ -19,7 +19,7 @@ with tempfile.TemporaryDirectory(prefix='test-runtime-',dir=ROOT/'tests') as tem
                 try:urllib.request.urlopen(BASE+'/index.php',timeout=.3).close();break
                 except OSError:time.sleep(.1)
             else:raise RuntimeError('PHP QA server did not become ready.')
-            for suite in ['smoke.py','sharing-smoke.py','studio-smoke.py']:
+            for suite in ['smoke.py','sharing-smoke.py','studio-smoke.py','template-smoke.py']:
                 subprocess.run(['python',str(ROOT/'tests'/suite),BASE],cwd=ROOT,env=env,check=True)
         finally:
             process.terminate()

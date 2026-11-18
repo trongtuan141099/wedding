@@ -24,7 +24,8 @@ Bật HTTPS và ghi log, giữ display_errors=Off.
    owner/group để đọc/ghi; không cấp 0777. Script không đổi owner hoặc thư mục cha của dự án.
 4. Bật Show Hidden Files; xác nhận .htaccess, .user.ini, data/.htaccess và uploads/.htaccess có mặt.
 5. Mở `/wedding/admin.php`, tạo mật khẩu lần đầu và lưu nội dung thiệp. Không cần setup.php.
-   Clone mới dùng defaults.php; Git không kèm dữ liệu hoặc ảnh tải lên từ máy phát triển.
+   Clone mới dùng public-template.php và ảnh đã snapshot trong assets, giống cấu hình local đã xuất.
+   Git không kèm mật khẩu, session, khách mời, RSVP hoặc lời chúc từ máy phát triển.
 6. Trong Chia sẻ Zalo & Facebook, đặt URL công khai `https://tt-hub.io.vn/wedding`.
 7. Kiểm tra đăng nhập, upload, thiệp, nhạc sau bấm mở, tải QR, RSVP/xe và duyệt lời chúc.
    `/wedding/data/state.php` phải bị chặn qua web.
@@ -36,6 +37,19 @@ Clone ngoài thư mục web cần một bước triển khai riêng sang Documen
 
 Sao lưu data, uploads và tài nguyên riêng. Trong Git Version Control → Manage, dùng **Update from Remote**.
 Hoặc dùng `git pull --ff-only` trong Terminal. Kiểm tra lại quyền và chức năng sau cập nhật.
+
+Để đồng bộ luôn nội dung/giao diện từ bản local đã xuất vào Git, chạy sau khi pull:
+
+```bash
+php tools/sync-template.php
+bash tools/fix-permissions.sh
+```
+
+Lệnh đồng bộ ghi đè cấu hình công khai của các thiệp có trong snapshot, có sao lưu state tại data/backups.
+Giữ nguyên mật khẩu, slug hiện tại, khách mời, RSVP, lời chúc và các thiệp riêng khác trên hosting.
+Thiệp mới trong snapshot sẽ được thêm; nếu slug trùng thiệp riêng thì dừng và không ghi dữ liệu.
+Trước khi commit nội dung mới từ local, bấm Lưu thay đổi trong quản trị rồi chạy
+`php tools/export-template.php`. Các ảnh uploads được sao chép thành assets/template-* để clone có đủ ảnh.
 
 data/* và uploads/* được loại khỏi Git, ngoại trừ .htaccess; cập nhật thông thường giữ nguyên nội dung,
 mật khẩu và dữ liệu khách. Không dùng `git clean -fdx`, reset hoặc giải nén bản cài mới đè dữ liệu thật.
