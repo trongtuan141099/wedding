@@ -32,13 +32,15 @@ seed = json.loads(result.stdout.decode('utf-8'))
 configs = [seed['config']] + [c['config'] for c in seed['cards'].values()]
 refs = set()
 for config in configs:
-    values = [config['hero']['image'], config['music']['src'], *config['gallery']['items'],
+    values = [config['hero']['image'], config['music']['src'], config['sharing']['image'], *config['gallery']['items'],
               *[b['qr'] for b in config['banks']['items']]]
     refs.update(v for v in values if v and re.fullmatch(r'(assets|uploads)/[A-Za-z0-9_.-]+', v))
 
 source_names = ['index.php', 'admin.php', 'style.css', 'script.js', 'studio.css',
                 'studio.js', 'experience.js', 'invitation.css', 'invitation.js',
                 'studio-api.php', 'bootstrap.php', 'api.php', 'defaults.php', 'setup.php',
+                'account.php', 'social.php', 'social-image.php',
+                'assets/fonts/PlayfairDisplay.ttf', 'assets/fonts/OFL.txt',
                 '.htaccess', '.user.ini', 'README.md', 'DEPLOY.md', 'HOSTING-FIX.md',
                 'data/.htaccess', 'uploads/.htaccess']
 source = {name: (ROOT / name).read_bytes() for name in source_names}

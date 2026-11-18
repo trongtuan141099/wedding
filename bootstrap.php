@@ -66,7 +66,7 @@ function json_response(array $v,int $code=200): void {http_response_code($code);
 function token(): string {return $_SESSION['csrf']??=bin2hex(random_bytes(32));}
 function csrf(): void {if(!hash_equals(token(),$_SERVER['HTTP_X_CSRF_TOKEN']??$_POST['csrf']??'')) json_response(['error'=>'Phiên đã hết hạn. Vui lòng tải lại trang.'],403);}
 function password_hash_config(): string {return getenv('WEDDING_ADMIN_PASSWORD_HASH') ?: (is_file(DATA_DIR.'/credentials.php') ? (string)(require DATA_DIR.'/credentials.php') : '');}
-function local_demo(): bool {return PHP_SAPI==='cli-server' && in_array($_SERVER['REMOTE_ADDR']??'',['127.0.0.1','::1'],true) && password_hash_config()==='';}
+function local_demo(): bool {return getenv('WEDDING_DEMO_MODE')==='1' && PHP_SAPI==='cli-server' && in_array($_SERVER['REMOTE_ADDR']??'',['127.0.0.1','::1'],true) && password_hash_config()==='';}
 function authenticated(): bool {return local_demo() || (($_SESSION['admin']??false)===true && hash_equals(hash('sha256',password_hash_config()),$_SESSION['authHash']??''));}
 function require_admin(): void {if(!authenticated()) json_response(['error'=>'Vui lòng đăng nhập.'],401);}
 function clean_text(mixed $v,int $max=2000): string {if(!is_string($v)||strlen($v)>$max) throw new InvalidArgumentException('Nội dung không hợp lệ hoặc quá dài.');return trim($v);}

@@ -5,6 +5,31 @@ Không cần Composer, Node, MySQL hay bước build. Dữ liệu thật lưu tr
 không phụ thuộc LocalStorage của khách mời.
 
 
+## Điều chỉnh tốc độ, mật khẩu và chia sẻ — 18/11/2026
+
+- **Giao diện thiệp**: tốc độ tự cuộn 5–80 pixel/giây; thời gian xem mỗi ảnh 2–15 giây;
+  thời gian chuyển ảnh 0,4–2 giây. Các thanh kéo có số hiển thị, lưu riêng cho từng thiệp.
+- Cỡ tên hai bạn cùng một nhóm được cân đối theo tên dài hơn và chiều rộng màn hình,
+  giữ cùng kích thước và tự điều chỉnh sau khi font tải xong. Thanh cỡ tên vẫn dùng được.
+- **Mật khẩu**: tự tạo tại admin.php lần đầu, không cần Terminal. Form khóa sau khi
+  tạo; đổi mật khẩu đòi mật khẩu hiện tại. Các phiên khác hết hiệu lực sau khi đổi.
+- **Chia sẻ Zalo & Facebook**: tùy chỉnh tiêu đề, mô tả, ảnh và vị trí cắt ảnh. Để trống
+  tiêu đề/mô tả để tự dùng tên, ngày giờ và địa điểm. Tải một ảnh có hai bạn rõ nét,
+  tốt nhất ảnh ngang. Bấm **Lưu thay đổi**, rồi **Xem ảnh chia sẻ đã lưu**.
+- Máy chủ xuất sẵn Open Graph/Twitter metadata trong HTML và ảnh JPEG 1200×630 có tên,
+  trái tim và ngày cưới; không cần JavaScript cho crawler. Ảnh sử dụng font Playfair
+  Display được cấp phép SIL OFL, kèm giấy phép trong assets/fonts/OFL.txt.
+- Không đưa tên riêng của khách mời hay token cá nhân vào metadata chia sẻ. Link riêng
+  vẫn cá nhân hóa khi khách thực sự mở thiệp.
+- Ảnh HTTPS bên ngoài được tham chiếu trực tiếp, máy chủ không tải hộ. Thiếu GD/FreeType
+  thì dùng ảnh gốc thay cho ảnh có chữ. Website/ảnh cần truy cập công khai, trả 200 và
+  không bị firewall chặn crawler. Nếu website vẫn HTTP 500, phải sửa hosting trước.
+- Đã kiểm tra bằng request mô phỏng crawler; chưa gửi tin thật lên tài khoản Zalo/Facebook.
+  Hình thức hiển thị và thời điểm làm mới do nền tảng quyết định. Facebook có thể làm
+  mới qua Sharing Debugger; link đã gửi có thể vẫn giữ bản xem trước cũ.
+
+Tài liệu giao thức: https://ogp.me/ — công cụ Facebook: https://developers.facebook.com/tools/debug/
+
 ## Giao diện Song Hỷ — bản 17/11/2026
 
 Bản này chỉnh mẫu Song Hỷ theo giao diện điện thoại: nền xanh đậm–kem, dải tiêu đề
@@ -91,64 +116,36 @@ riêng tư dữ liệu, revision và đổi mật khẩu/thu hồi phiên. Deskt
 
 ## Chạy trên XAMPP
 
-1. Thư mục hiện tại: `D:\xampp\htdocs\wedding`.
+1. Thư mục dự án: `D:\xampp\htdocs\wedding`.
 2. Bật Apache trong XAMPP Control Panel.
-3. Mở Terminal tại thư mục dự án, chạy:
+3. Mở `http://localhost/wedding/admin.php`. Nếu chưa có mật khẩu, trang hiện form tạo
+   mật khẩu quản trị lần đầu; nhập và xác nhận để vào dashboard. Không cần chạy setup.php.
+4. Các lần sau dùng mật khẩu đã tạo. Đổi tại **Tài khoản & mật khẩu**.
+5. Thiệp khách mời: `http://localhost/wedding/`.
 
-```powershell
-D:\xampp\php\php.exe setup.php
-```
+Không có mật khẩu mặc định. Việc tạo quản trị chỉ mở khi chưa có thông tin quản trị;
+hoàn tất ngay sau khi đưa website lên hosting. Mật khẩu hiện có từ bản trước được giữ nguyên.
+Mặc định localhost cũng yêu cầu tạo/đăng nhập. Chỉ bộ kiểm thử riêng mới bật biến
+`WEDDING_DEMO_MODE=1`; không đặt biến này cho website sử dụng thật.
 
-4. Lưu mật khẩu ngẫu nhiên được in ra bằng trình quản lý mật khẩu.
-5. Mở `http://localhost/wedding/admin.php`, đăng nhập bằng mật khẩu đó.
-6. Thiệp khách mời: `http://localhost/wedding/`.
-
-Không có tài khoản/mật khẩu mặc định. Khi chưa cấu hình mật khẩu, chỉ **PHP development
-server chạy trên loopback** mới mở chế độ demo quản trị. Apache/XAMPP và hosting luôn
-yêu cầu cấu hình mật khẩu.
-
-Để xem thử nhanh, không cần Apache:
-
-```powershell
-.\start-local.ps1
-```
-
-Script dùng thư mục upload tạm trong dự án để tránh lỗi quyền ghi `xampp/tmp` khi chạy
-trong môi trường giới hạn. Mở `http://127.0.0.1:8088/admin.php`. Dừng bằng Ctrl+C. Chế độ demo không có hiệu lực
-sau khi chạy `setup.php`. Không dùng PHP development server để phục vụ Internet.
+Có thể chạy thử qua PowerShell bằng `.\start-local.ps1`, rồi mở
+`http://127.0.0.1:8088/admin.php`; dừng bằng Ctrl+C. Đây là development server cục bộ.
 
 ## Đưa lên cPanel
 
-1. Dùng PHP **8.2 trở lên** được nhà cung cấp hỗ trợ, với extensions `fileinfo`, `json`,
-   `session`. Mã cũng đã được kiểm tra với PHP 8.0.30 của XAMPP, nhưng bản PHP cũ không
-   nên dùng trên hosting công khai. Cần Apache 2.4 / LiteSpeed có hỗ trợ `.htaccess`.
-2. Upload mã nguồn và thư mục `assets/`, `data/.htaccess`, `uploads/.htaccess` vào
-   `public_html/` hoặc thư mục con. Bật hiển thị tệp ẩn để không bỏ sót `.htaccess`.
-   Không upload thư mục `tests/`, `previews/`, `start-local.ps1`, bản ZIP, session, log hoặc thông tin quản trị của máy local.
-3. `data/` và `uploads/` cần quyền ghi bởi tài khoản PHP. Thường thư mục 0750 / 0755
-   và tệp 0640 / 0644 là đủ tùy cấu hình hosting. Không đặt 0777.
-4. Trong cPanel Terminal/SSH, chuyển vào thư mục vừa upload và chạy `php setup.php`.
-   Lưu mật khẩu được in ra. Chương trình chỉ chạy CLI, không mở cài đặt qua web.
-5. Nếu hosting không có Terminal, tạo hash trên máy local:
-
-```powershell
-D:\xampp\php\php.exe setup.php
-```
-
-   Upload **chỉ** `data/credentials.php` vừa tạo qua File Manager bảo mật của cPanel.
-   Hoặc đặt biến môi trường `WEDDING_ADMIN_PASSWORD_HASH` bằng một hash do PHP
-   `password_hash(..., PASSWORD_DEFAULT)` tạo. Không đưa mật khẩu thô vào mã nguồn.
-6. Bật HTTPS (AutoSSL), tắt `display_errors`, bật nhật ký lỗi của hosting.
-7. Đặt `upload_max_filesize = 16M`, `post_max_size = 20M` trong MultiPHP INI Editor.
-   Giới hạn ứng dụng: ảnh 8 MB, nhạc 15 MB, ảnh tối đa 40 megapixel, 40 mục mỗi danh sách.
-8. Truy cập `/admin.php`, kiểm tra ảnh/nhạc, lưu thiệp và gửi thử RSVP trên trang chính.
-   Tệp dưới `/data/` phải trả **403** qua web. Kiểm tra trước khi nhận khách thật.
-9. Chia sẻ URL HTTPS của trang thiệp. Liên kết localhost chỉ hoạt động trên máy của bạn.
-
-Nếu dùng Nginx, cần cấu hình `location ^~ /data/ { deny all; }` tương ứng với đường dẫn
-ứng dụng, chặn PHP/HTML/SVG trong uploads, tắt directory listing và chặn truy cập các
-tệp nội bộ như `bootstrap.php`, `defaults.php`, ZIP, README và tests. Không dùng nguyên
-bộ trên Nginx khi chưa thiết lập những quy tắc này.
+1. Dùng PHP 8.2 trở lên với `fileinfo`, `json`, `session`. Bật **GD / FreeType** để
+   tạo ảnh chia sẻ ngang có tên và ngày cưới. Nếu thiếu GD, metadata tự dùng ảnh gốc.
+2. Giải nén bản cài mới vào `public_html/` hoặc thư mục website. Bật hiển thị tệp ẩn.
+   Tệp 0644, thư mục 0755. Giữ các tệp .htaccess bảo vệ data và uploads.
+3. `data/` và `uploads/` cần quyền ghi của tài khoản PHP; không đặt 0777.
+4. Bật HTTPS. Mở `/admin.php`, tự tạo mật khẩu lần đầu ngay trên trang web.
+   `setup.php` chỉ còn là phương án CLI tùy chọn cho người quản trị hệ thống.
+5. Trong **Chia sẻ Zalo & Facebook**, điền **Địa chỉ website công khai**, ví dụ
+   `https://tt-hub.io.vn`. Nếu ứng dụng ở thư mục con, điền cả thư mục đó.
+6. Đặt `upload_max_filesize=16M`, `post_max_size=20M`; kiểm tra thư mục `/data/` bị chặn
+   qua web. Xem DEPLOY.md và HOSTING-FIX.md để cài đặt hoặc cập nhật không ghi đè dữ liệu.
+7. Lưu thiệp, kiểm tra nhạc, tải QR, RSVP/xe đưa đón và ảnh chia sẻ đã lưu.
+   Chia sẻ link tên miền thật; localhost không dùng để tạo bản xem trước bên ngoài.
 
 ## Cách chỉnh thiệp
 
@@ -223,7 +220,7 @@ nguồn script, nhưng Tailwind CDN cần inline script/style: đây không ph�
 Chỉ dùng URL HTTPS tin cậy cho ảnh/nhạc ngoài; URL ngoài không được máy chủ tải hộ.
 
 Đổi/quên mật khẩu: qua tài khoản hosting được ủy quyền, sao lưu rồi xóa
-`data/credentials.php`, chạy lại `php setup.php`. Xóa session cũ trong `data/sessions/`
+`data/credentials.php`, rồi mở lại `/admin.php` để tạo mật khẩu mới. Xóa session cũ trong `data/sessions/`
 để buộc đăng nhập lại. Nếu dùng biến môi trường, thay hash ở môi trường hosting.
 Không tạo trang reset mật khẩu công khai.
 

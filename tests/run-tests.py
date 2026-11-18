@@ -10,7 +10,7 @@ with tempfile.TemporaryDirectory(prefix='test-runtime-',dir=ROOT/'tests') as tem
     data=pathlib.Path(temp).resolve()
     assert data.is_relative_to((ROOT/'tests').resolve())
     (data/'tmp').mkdir()
-    env=os.environ.copy();env['WEDDING_DATA_DIR']=str(data);env['WEDDING_TEST_DATA_DIR']=str(data);env.pop('WEDDING_ADMIN_PASSWORD_HASH',None)
+    env=os.environ.copy();env['WEDDING_DATA_DIR']=str(data);env['WEDDING_TEST_DATA_DIR']=str(data);env['WEDDING_DEMO_MODE']='1';env.pop('WEDDING_ADMIN_PASSWORD_HASH',None)
     with open(data/'server.log','w') as log:
         process=subprocess.Popen([PHP,'-d','upload_tmp_dir='+str(data/'tmp'),'-d','upload_max_filesize=16M','-d','post_max_size=20M','-S','127.0.0.1:8091','-t',str(ROOT)],cwd=ROOT,env=env,stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
         try:

@@ -13,11 +13,13 @@ và làm theo **HOSTING-FIX.md**. Gói sửa giữ nguyên state, mật khẩu v
    không để tệp PHP ở quyền 0666 vì PHP handler của hosting có thể từ chối chạy.
    Cho tài khoản PHP quyền ghi `data/` và `uploads/`; thông thường 0750/0755 tùy hosting.
    Không dùng quyền 0777.
-5. Mở cPanel Terminal, chuyển đến thư mục đã giải nén và chạy `php setup.php`.
-   Lưu mật khẩu ngẫu nhiên được in ra, rồi đăng nhập tại `https://tenmien/admin.php`.
-   Nếu không có Terminal, xem cách tạo và upload `data/credentials.php` trong README.md.
+5. Mở `https://tenmien/admin.php`, tự nhập và xác nhận mật khẩu quản trị lần đầu.
+   Không cần Terminal hoặc setup.php. Sau này đổi tại Tài khoản & mật khẩu.
+   Nếu đã có mật khẩu thì trang chỉ hiện đăng nhập, không cho tạo lại công khai.
 6. Bật HTTPS / AutoSSL. Giữ `display_errors=Off`; bật ghi log lỗi tại hosting.
-7. Kiểm tra giới hạn PHP: `upload_max_filesize=16M`, `post_max_size=20M`.
+7. Bật GD / FreeType để tạo ảnh chia sẻ 1200×630 có tên và ngày cưới.
+   Trong Chia sẻ Zalo & Facebook, đặt URL công khai HTTPS đúng tên miền/thư mục.
+   Kiểm tra giới hạn PHP: `upload_max_filesize=16M`, `post_max_size=20M`.
    `.user.ini` đã kèm cấu hình; dùng MultiPHP INI Editor nếu hosting không áp dụng tệp này.
 8. Kiểm tra thiệp, phát nhạc, tải QR, gửi thử RSVP, yêu cầu xe và duyệt lời chúc.
    Kiểm tra URL `/data/state.php` trả 403 qua web trước khi nhận khách thật.

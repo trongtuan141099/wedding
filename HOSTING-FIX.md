@@ -37,8 +37,8 @@ https://support.cpanel.net/hc/en-us/articles/1500009376861-PHP-website-error-500
   và quyền ghi uploads/; không sửa bằng cách cấp 0777. Nhờ hosting sửa owner nếu cần.
 - `Options not allowed here`, `Invalid command`: hosting có thể hạn chế chỉ thị
   .htaccess. Gửi đúng dòng log để sửa cấu hình tương ứng; không tắt toàn bộ bảo vệ data/.
-- Website đã mở nhưng admin báo chưa cấu hình: đây không phải lỗi 500. Chạy
-  `php setup.php` trong Terminal tại thư mục website để tạo mật khẩu lần đầu.
+- Website đã mở nhưng chưa có mật khẩu: mở `/admin.php` để tạo mật khẩu ngay trên web.
+  Không cần Terminal hoặc chạy setup.php ở phiên bản mới.
 
 Gói **wedding-invitation-cpanel.zip** là bản cài mới đầy đủ, có cấu hình thiệp khởi tạo.
 Không dùng tệp data/state.php của gói cài mới để ghi đè dữ liệu thật trên server.
