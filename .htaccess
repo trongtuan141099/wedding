@@ -1,0 +1,5 @@
+Options -Indexes
+DirectoryIndex index.php
+<FilesMatch "^\.|^(defaults|bootstrap|studio-api|account|social)\.php$|\.(md|lock|log|zip|ps1|py)$">
+Require all denied
+</FilesMatch>

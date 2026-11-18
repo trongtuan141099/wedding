@@ -1,0 +1,8 @@
+/data/*
+!/data/.htaccess
+/uploads/*
+!/uploads/.htaccess
+*.zip
+__pycache__/
+/tests/qa-data/
+/tests/test-runtime-*/
