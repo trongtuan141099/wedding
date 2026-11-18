@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 return [
+ 'wording'=>['envelopeTitle'=>'THIỆP MỜI CHUNG ĐÔI','envelopeTagline'=>'MỘT KHỞI ĐẦU CHO MÃI MÃI','heroTagline'=>'MỘT LỜI HẸN · MỘT ĐỜI THƯƠNG','albumQuote'=>'Every love story is beautiful, but ours is my favorite.','giftMessage'=>'Tình cảm của bạn là món quà quý giá nhất với chúng mình.','footerTitle'=>'Thank you!','footerMessage'=>'Sự hiện diện của bạn là niềm vinh hạnh và hạnh phúc của gia đình chúng mình.'],
  'basic'=>['greeting'=>'WELCOME TO OUR WEDDING','groom'=>'Thân Trọng Tuấn','bride'=>'Hà Thị Tuyết Trinh','groomShort'=>'Trọng Tuấn','brideShort'=>'Tuyết Trinh','groomRank'=>'Thứ Nam','brideRank'=>'Thứ Nữ','order'=>'groom'],
  'hero'=>['enabled'=>true,'image'=>'assets/cover.jpg','caption'=>'LOVE NEVER FAILS'],
  'family'=>['enabled'=>true,'groomTitle'=>'Ông Bà','groomFather'=>'Thân Trọng Mẫn','groomMother'=>'Lê Thị Khuyên','groomAddress'=>'Thôn Tây Sơn, Xã Nam Hải Lăng, Tỉnh Quảng Trị','brideTitle'=>'Ông Bà','brideFather'=>'Hà Văn Tín','brideMother'=>'Phạm Thị Mỹ Dung','brideAddress'=>'Xóm 12, Thôn An Lạc, Xã Phù Mỹ Tây, Tỉnh Gia Lai'],

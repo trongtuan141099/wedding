@@ -73,7 +73,13 @@ Không ghi đè data/state.php của bản cài mới lên site đang dùng. Di 
   public_html và wedding, rồi xem cPanel → Metrics → Errors.
 - 500: kiểm tra log PHP, phiên bản PHP, quyền/owner data và uploads; tệp PHP không dùng 0666.
 - Không lưu/upload: kiểm tra quyền ghi và giới hạn POST/upload.
+- Ảnh JPG/PNG/WebP tải được cả khi hosting chưa bật fileinfo. Tải nhạc cần fileinfo.
+  Các lỗi thư mục tạm PHP, giới hạn upload, quyền uploads và quota có thông báo riêng.
 - Preview cũ: kiểm tra ảnh công khai, URL chia sẻ và làm mới cache nền tảng.
+
+Sau khi cập nhật mã, dữ liệu cũ tự bổ sung mục Nội dung chữ trên thiệp. Không cần chạy lại sync-template.php
+chỉ để có các trường mới. Vào quản trị, sửa chữ và bấm Lưu thay đổi. Ảnh chia sẻ có URL phiên bản mới;
+tin nhắn đã gửi có thể vẫn dùng ảnh cache cũ của Zalo/Facebook.
 
 Nginx cần cấu hình riêng để chặn data, tests, tools, tệp ẩn/nội bộ và thực thi script trong uploads;
 .htaccess không có hiệu lực trên Nginx.

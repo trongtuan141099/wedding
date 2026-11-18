@@ -15,6 +15,9 @@ Chạy trực tiếp trên Apache 2.4/LiteSpeed; không cần Composer, Node, My
 - Hộp quà có Lưu QR; đã bỏ nút lưu ngày và ô lời nhắn trong RSVP.
 - Tạo mật khẩu lần đầu trên web, đăng nhập, đổi mật khẩu và vô hiệu phiên cũ.
 - Metadata Open Graph/Twitter từ máy chủ; ảnh chia sẻ 1200×630 khi có GD/FreeType.
+- Mục Nội dung chữ trên thiệp cho phép sửa tiêu đề phong bì, lời mở, lời hẹn, trích dẫn album,
+  lời nhắn quà mừng và lời cảm ơn; để trống để bỏ chữ. Dữ liệu cũ tự bổ sung các trường mới.
+- Ảnh chia sẻ sáng rõ, tên/ngày nằm trên dải nền kem thay cho lớp phủ đen.
 
 ## Cài đặt
 

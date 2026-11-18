@@ -23,10 +23,10 @@ header('Cache-Control: private, no-store');header('Referrer-Policy: no-referrer'
 <meta name="twitter:description" content="<?=e($social['description'])?>"><meta name="twitter:image" content="<?=e($social['image'])?>">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261118"><link rel="stylesheet" href="studio.css?v=20261118"><link rel="stylesheet" href="invitation.css?v=20261118">
+<link rel="stylesheet" href="style.css?v=20261119"><link rel="stylesheet" href="studio.css?v=20261119"><link rel="stylesheet" href="invitation.css?v=20261119">
 </head><body class="invitation-body <?=$preview?'is-preview':''?>">
 <noscript>Vui lòng bật JavaScript để xem thiệp và xác nhận tham dự. Trân trọng kính mời bạn đến dự ngày vui của <?=e($c['basic']['groomShort'].' & '.$c['basic']['brideShort'])?>.</noscript>
 <main id="invitation"></main><div id="toast" role="status" aria-live="polite"></div>
 <script type="application/json" id="boot"><?=json_encode(['mode'=>'invitation','preview'=>$preview,'config'=>$c,'wishes'=>$wishes,'cardId'=>$cardId,'guest'=>$guest?['name'=>$guest['name'],'salutation'=>$guest['salutation']]:null],JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE)?></script>
-<script src="script.js?v=20261118" defer></script><script src="invitation.js?v=20261118" defer></script><script src="experience.js?v=20261118" defer></script>
+<script src="script.js?v=20261119" defer></script><script src="invitation.js?v=20261119" defer></script><script src="experience.js?v=20261119" defer></script>
 </body></html>

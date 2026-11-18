@@ -14,7 +14,11 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 header('X-Frame-Options: SAMEORIGIN');
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src 'self' https://www.google.com; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'");
 function defaults(): array { return require __DIR__.'/defaults.php'; }
-function initial_state(): array { return require __DIR__.'/public-template.php'; }
+function initial_state(): array {
+ $seed=require __DIR__.'/public-template.php';$seed['config']=upgrade_config($seed['config']);
+ foreach($seed['cards'] as &$card)$card['config']=upgrade_config($card['config']);unset($card);
+ return $seed;
+}
 /** One lock protects read/modify/write, including concurrent public submissions. */
 function store_state(?callable $mutate=null): array {
  $lock=fopen(DATA_DIR.'/state.lock.php','c+'); if (!$lock || !flock($lock,LOCK_EX)) throw new RuntimeException('Storage lock failed');

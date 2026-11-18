@@ -38,7 +38,7 @@ function social_data(array $config,string $id): array {
  $details=array_filter([$date,$r['time'],$r['venue'],$r['address']]);
  $description=social_limit($config['sharing']['description']?:'Thân mời quý khách đến dự '.mb_strtolower_fallback($r['type']).' của '.str_replace(' ♥ ',' & ',$names).($details?' | '.implode(' | ',$details):''),500);
  $root=store_state();$slug=$root['cardMeta'][$id]['slug'];$source=social_source($config);
- $version=substr(hash('sha256',json_encode(['social-v2',$names,$title,$description,$r['date'],$source['src'],$config['sharing']['imagePosition'],$source['local']?filemtime($source['local']['path']):0],JSON_UNESCAPED_UNICODE)),0,16);
+ $version=substr(hash('sha256',json_encode(['social-v3-light',$names,$title,$description,$r['date'],$source['src'],$config['sharing']['imagePosition'],$source['local']?filemtime($source['local']['path']):0],JSON_UNESCAPED_UNICODE)),0,16);
  $render=social_can_render($source);
  return ['title'=>$title,'names'=>$names,'description'=>$description,'date'=>$date,'canonical'=>social_absolute('index.php?i='.rawurlencode($slug),$config),
   'image'=>$render?social_absolute('social-image.php?i='.rawurlencode($slug).'&v='.$version,$config):social_absolute($source['src'],$config),

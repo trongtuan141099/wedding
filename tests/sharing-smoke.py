@@ -1,7 +1,7 @@
 """Isolated HTTP tests for browser onboarding, motion settings and crawler metadata."""
 import http.cookiejar, io, json, os, pathlib, re, secrets, sys, urllib.error, urllib.parse, urllib.request
 from html import unescape
-from PIL import Image
+from PIL import Image, ImageStat
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 DATA=pathlib.Path(os.environ['WEDDING_TEST_DATA_DIR']).resolve()
 assert DATA.is_relative_to((ROOT/'tests').resolve())
@@ -37,10 +37,15 @@ try:
     assert call('password',{'currentPassword':password,'newPassword':password+'n','confirmPassword':password+'n'})[0]==200
     _,s=call('config');c=s['config']
     c['experience'].update(scrollSpeed=5,albumInterval=2.5,albumTransition=.6)
+    c['wording'].update(envelopeTitle='Thiệp mời của chúng mình',envelopeTagline='Ngày mình có nhau',heroTagline='Hẹn một đời thương',albumQuote='Our story <3',giftMessage='Cảm ơn tình cảm của bạn!',footerTitle='Cảm ơn!',footerMessage='Hẹn gặp bạn trong ngày vui.')
     c['sharing'].update(title='Minh & An — Ngày chung đôi',description='Trân trọng kính mời dự lễ cưới.',image='assets/photo-1.jpg',baseUrl=BASE)
     assert call('save',{'config':c,'revision':s['revision']})[0]==200
     _,saved=call('config')
     assert saved['config']['experience']['albumInterval']==2.5
+    assert saved['config']['wording']==c['wording']
+    legacy=json.loads(json.dumps(c));legacy.pop('wording')
+    status,upgraded=call('validate',{'config':legacy})
+    assert status==200 and 'envelopeTitle' in upgraded['config']['wording']
     invalid=json.loads(json.dumps(c));invalid['sharing']['baseUrl']='https://user@example.com'
     assert call('validate',{'config':invalid})[0]==422
     html=client.open(urllib.request.Request(BASE+'/index.php',headers={'User-Agent':'facebookexternalhit/1.1'})).read().decode()
@@ -51,7 +56,21 @@ try:
     assert meta['twitter:card']=='summary_large_image'
     with client.open(meta['og:image']) as r:
         image=r.read();assert r.headers.get_content_type()=='image/jpeg'
-    with Image.open(io.BytesIO(image)) as im:assert im.size==(1200,630)
+    with Image.open(io.BytesIO(image)) as im:
+        assert im.size==(1200,630)
+        assert min(im.getpixel((5,625)))>230, 'Missing light caption band'
+        # The photograph itself must not regain a dark gradient overlay.
+        with Image.open(ROOT/'assets/photo-1.jpg') as source:
+            sw,sh=source.size;ratio=1200/630
+            if sw/sh>ratio:
+                cw=round(sh*ratio);ch=sh;x=int((sw-cw)/2);y=0
+            else:
+                cw=sw;ch=round(sw/ratio);x=0;y=int((sh-ch)*c['sharing']['imagePosition']/100)
+            expected=source.crop((x,y,x+cw,y+ch)).resize((1200,630))
+            region=(100,280,1100,480)
+            actual_mean=sum(ImageStat.Stat(im.crop(region)).mean)/3
+            source_mean=sum(ImageStat.Stat(expected.crop(region)).mean)/3
+            assert actual_mean>=source_mean-2, 'Photo is darkened'
     # Private guest labels and tokens are not put in social metadata.
     _,guest=call('invitee-save',{'name':'PRIVATE GUEST','salutation':'Bạn'})
     token_guest=guest['guests'][0]['token']

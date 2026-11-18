@@ -18,17 +18,29 @@ try {
   json_response(['error'=>'Không tìm thấy.'],404);
  }
  if($_SERVER['REQUEST_METHOD']!=='POST')json_response(['error'=>'Phương thức không được hỗ trợ.'],405);
+ if($action==='upload' && empty($_FILES) && (int)($_SERVER['CONTENT_LENGTH']??0)>0){require_admin();throw new InvalidArgumentException('Máy chủ không nhận được tệp tải lên. Kiểm tra post_max_size, upload_max_filesize và thư mục tạm PHP trong cPanel.');}
  csrf();
  if($action==='upload'){
   require_admin();$f=$_FILES['file']??null;
-  if(!$f||$f['error']!==UPLOAD_ERR_OK||$f['size']>15*1024*1024)throw new InvalidArgumentException('Tải lên thất bại. Ảnh tối đa 8MB, nhạc tối đa 15MB (kiểm tra giới hạn PHP hosting).');
-  $mime=(new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);$ext=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','audio/mpeg'=>'mp3','audio/ogg'=>'ogg'][$mime]??null;
+  if(!$f)throw new InvalidArgumentException('Vui lòng chọn tệp tải lên.');
+  $uploadErrors=[UPLOAD_ERR_INI_SIZE=>'Tệp vượt upload_max_filesize của hosting.',UPLOAD_ERR_FORM_SIZE=>'Tệp vượt giới hạn tải lên.',UPLOAD_ERR_PARTIAL=>'Tệp tải lên chưa hoàn tất. Hãy thử lại.',UPLOAD_ERR_NO_FILE=>'Chưa chọn tệp.',UPLOAD_ERR_NO_TMP_DIR=>'Hosting thiếu thư mục tạm PHP. Cấu hình upload_tmp_dir trong cPanel.',UPLOAD_ERR_CANT_WRITE=>'Hosting không ghi được tệp tạm. Kiểm tra dung lượng và quyền ghi thư mục tạm PHP.',UPLOAD_ERR_EXTENSION=>'Một extension PHP trên hosting đã chặn tải tệp.'];
+  if($f['error']!==UPLOAD_ERR_OK)throw new InvalidArgumentException($uploadErrors[$f['error']]??'Tải lên thất bại.');
+  if($f['size']>15*1024*1024)throw new InvalidArgumentException('Ảnh tối đa 8 MB, nhạc tối đa 15 MB.');
+  // Image detection works even when shared hosting disables the fileinfo extension.
+  $dim=@getimagesize($f['tmp_name']);
+  if($dim){$mime=$dim['mime'];}
+  else{
+   if(!class_exists('finfo'))throw new InvalidArgumentException('Không đọc được ảnh JPG/PNG/WebP. Nếu tải nhạc, hãy bật extension fileinfo trong cPanel.');
+   $mime=(new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);
+  }
+  $ext=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','audio/mpeg'=>'mp3','audio/ogg'=>'ogg'][$mime]??null;
   if(!$ext)throw new InvalidArgumentException('Chỉ nhận JPG, PNG, WebP, MP3 hoặc OGG.');
-  if(str_starts_with($mime,'image/') && ($f['size']>8*1024*1024 || !($dim=getimagesize($f['tmp_name'])) || $dim[0]*$dim[1]>40000000))throw new InvalidArgumentException('Ảnh vượt kích thước cho phép.');
-  if(!is_dir(__DIR__.'/uploads'))mkdir(__DIR__.'/uploads',0755,true);
+  if(str_starts_with($mime,'image/') && ($f['size']>8*1024*1024 || !$dim || $dim[0]*$dim[1]>40000000))throw new InvalidArgumentException('Ảnh tối đa 8 MB và 40 megapixel.');
+  if(!is_dir(__DIR__.'/uploads')&&!@mkdir(__DIR__.'/uploads',0755,true))throw new InvalidArgumentException('Không tạo được uploads. Hãy tạo thư mục uploads trong thư mục website, đặt quyền 0755 và đúng chủ sở hữu tài khoản cPanel.');
+  if(!is_writable(__DIR__.'/uploads'))throw new InvalidArgumentException('Thư mục uploads chưa có quyền ghi cho PHP. Chạy bash tools/fix-permissions.sh hoặc nhờ hosting sửa quyền/chủ sở hữu của uploads.');
   $path='uploads/'.bin2hex(random_bytes(16)).'.'.$ext;
-  if(!move_uploaded_file($f['tmp_name'],__DIR__.'/'.$path))throw new RuntimeException('Upload write failed');
-  chmod(__DIR__.'/'.$path,0644);
+  if(!@move_uploaded_file($f['tmp_name'],__DIR__.'/'.$path))throw new InvalidArgumentException('Không lưu được tệp vào uploads. Kiểm tra dung lượng còn trống, quota tài khoản và quyền/chủ sở hữu uploads trên hosting.');
+  if(!@chmod(__DIR__.'/'.$path,0644))error_log('Uploaded file saved, but could not normalize its permissions.');
   json_response(['url'=>$path]);
  }
  if((int)($_SERVER['CONTENT_LENGTH']??0)>500000)throw new InvalidArgumentException('Dữ liệu quá lớn.');
