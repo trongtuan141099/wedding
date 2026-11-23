@@ -34,7 +34,7 @@ assert 'Nguyễn Minh Anh' in html and new['slug'] in html
 assert g['token'] not in html.split('</head>',1)[0]  # Share metadata never leaks personal tokens.
 assert 'pickupAddress' not in html  # No private RSVP payload in initial HTML.
 ride={'name':'Spoofed name','attending':True,'count':3,'message':'Chúc mừng','transport':True,'pickupAddress':'12 Đường Hoa, Hà Nội','pickupCount':2,'phone':'0912345678'}
-bad=copy.deepcopy(ride);bad['pickupCount']=4
+bad=copy.deepcopy(ride);bad['pickupCount']=1.5
 assert call('rsvp',bad,card,g['token'])[0]==422
 bad=copy.deepcopy(ride);bad['phone']='invalid'
 assert call('rsvp',bad,card,g['token'])[0]==422

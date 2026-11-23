@@ -27,7 +27,7 @@ function localized_config(array $config): array {
 }
 function localized_response(array $response): array {
  if(wedding_language()!=='jp')return $response;
- $messages=['Cảm ơn lời chúc của bạn! Lời chúc sẽ hiển thị sau khi được duyệt.'=>'温かいメッセージをありがとうございます。承認後に表示されます。','Cảm ơn bạn đã xác nhận. Hẹn gặp bạn trong ngày vui!'=>'ご回答ありがとうございます。当日お会いできることを楽しみにしています。','Phiên đã hết hạn. Vui lòng tải lại trang.'=>'セッションの有効期限が切れました。ページを再読み込みしてください。','Bạn thao tác quá nhanh. Vui lòng thử lại sau một giờ.'=>'送信回数の上限に達しました。1時間後にもう一度お試しください。','Mục này đã đóng.'=>'現在、受付を終了しています。','Điền địa chỉ đón, số điện thoại hợp lệ và số người đón không vượt số người tham dự.'=>'お迎え場所と有効な電話番号を入力してください。送迎人数は出席人数以下にしてください。'];
+ $messages=['Số người đón phải là số nguyên lớn hơn hoặc bằng 1.'=>'送迎人数は1以上の整数で入力してください。','Điền địa chỉ đón và số điện thoại liên lạc hợp lệ.'=>'お迎え場所と有効な電話番号を入力してください。','Cảm ơn lời chúc của bạn! Lời chúc sẽ hiển thị sau khi được duyệt.'=>'温かいメッセージをありがとうございます。承認後に表示されます。','Cảm ơn bạn đã xác nhận. Hẹn gặp bạn trong ngày vui!'=>'ご回答ありがとうございます。当日お会いできることを楽しみにしています。','Phiên đã hết hạn. Vui lòng tải lại trang.'=>'セッションの有効期限が切れました。ページを再読み込みしてください。','Bạn thao tác quá nhanh. Vui lòng thử lại sau một giờ.'=>'送信回数の上限に達しました。1時間後にもう一度お試しください。','Mục này đã đóng.'=>'現在、受付を終了しています。','Điền địa chỉ đón, số điện thoại hợp lệ và số người đón không vượt số người tham dự.'=>'お迎え場所と有効な電話番号を入力してください。送迎人数は出席人数以下にしてください。'];
  foreach(['message','error'] as $key)if(isset($response[$key]))$response[$key]=$messages[$response[$key]]??($key==='error'?'送信できませんでした。入力内容を確認して、もう一度お試しください。':$response[$key]);
  return $response;
 }

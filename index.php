@@ -23,12 +23,12 @@ header('Cache-Control: private, no-store');header('Referrer-Policy: no-referrer'
 <meta name="twitter:description" content="<?=e($social['description'])?>"><meta name="twitter:image" content="<?=e($social['image'])?>">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261123"><link rel="stylesheet" href="studio.css?v=20261123"><link rel="stylesheet" href="invitation.css?v=20261123">
+<link rel="stylesheet" href="style.css?v=20261123-2"><link rel="stylesheet" href="studio.css?v=20261123-2"><link rel="stylesheet" href="invitation.css?v=20261123-2">
 <?php if($lang==='jp'): ?><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet"><?php endif; ?>
 </head><body class="invitation-body lang-<?=e($lang)?> <?=$preview?'is-preview':''?>">
 <noscript><?=$lang==='jp'?'招待状の閲覧と出欠のご回答にはJavaScriptを有効にしてください。':'Vui lòng bật JavaScript để xem thiệp và xác nhận tham dự.'?></noscript>
 <nav class="language-switch" aria-label="<?=$lang==='jp'?'言語':'Ngôn ngữ'?>"><?php foreach(['vn'=>'Tiếng Việt','jp'=>'日本語'] as $code=>$label): $query=[];foreach(['i','card','guest','preview'] as $key)if(isset($_GET[$key])&&is_string($_GET[$key]))$query[$key]=$_GET[$key];$query['lang']=$code; ?><a href="index.php?<?=e(http_build_query($query))?>" data-language="<?=e($code)?>" <?=$lang===$code?'aria-current="true"':''?>><?=e($label)?></a><?php endforeach; ?></nav>
 <main id="invitation"></main><div id="toast" role="status" aria-live="polite"></div>
 <script type="application/json" id="boot"><?=json_encode(['mode'=>'invitation','language'=>$lang,'preview'=>$preview,'config'=>$c,'wishes'=>$wishes,'cardId'=>$cardId,'guest'=>$guest?['name'=>$guest['name'],'salutation'=>$guest['salutation']]:null],JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE)?></script>
-<script src="i18n.js?v=20261123" defer></script><script src="script.js?v=20261123" defer></script><script src="invitation.js?v=20261123" defer></script><script src="experience.js?v=20261123" defer></script>
+<script src="i18n.js?v=20261123-2" defer></script><script src="script.js?v=20261123-2" defer></script><script src="invitation.js?v=20261123-2" defer></script><script src="experience.js?v=20261123-2" defer></script>
 </body></html>

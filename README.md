@@ -11,6 +11,9 @@ Chạy trực tiếp trên Apache 2.4/LiteSpeed; không cần Composer, Node, My
 - Điều chỉnh tốc độ cuộn, thời gian xem/chuyển ảnh, cỡ chữ và cỡ tên cân đối trên điện thoại.
 - Link theo slug, link cá nhân có tên khách; nhập danh sách, sao chép và xuất CSV.
 - RSVP và yêu cầu xe, địa chỉ đón, số người, điện thoại; dữ liệu chỉ hiển thị cho quản trị.
+- Số người đón nhận số nguyên từ 1 trở lên, độc lập với ô số người tham dự.
+- Quản trị có nút xóa từng lời chúc và từng phản hồi RSVP, kèm xác nhận. Xóa RSVP giữ nguyên link khách;
+  thông tin xe trong phản hồi được xóa cùng bản ghi. Xóa lời chúc đã duyệt cũng gỡ khỏi danh sách công khai.
 - Lời chúc chờ duyệt, sổ lưu bút, lời chúc nổi; lịch tháng và đếm ngược.
 - Hộp quà có Lưu QR; đã bỏ nút lưu ngày và ô lời nhắn trong RSVP.
 - Tạo mật khẩu lần đầu trên web, đăng nhập, đổi mật khẩu và vô hiệu phiên cũ.

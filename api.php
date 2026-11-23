@@ -58,6 +58,16 @@ try {
  if($action==='moderate'){
   require_admin();state(function($s)use($in){foreach($s['wishes'] as &$w)if($w['id']===($in['id']??''))$w['approved']=($in['approved']??false)===true;return $s;});json_response(['ok'=>true]);
  }
+ if(in_array($action,['wish-delete','rsvp-delete'],true)){
+  require_admin();$id=clean_text($in['id']??'',100);
+  if($id==='')throw new InvalidArgumentException('Thiếu mã bản ghi cần xóa.');
+  $collection=$action==='wish-delete'?'wishes':'responses';
+  state(function($s)use($id,$collection){
+   $remaining=array_values(array_filter($s[$collection],fn($record)=>$record['id']!==$id));
+   if(count($remaining)===count($s[$collection]))throw new InvalidArgumentException('Bản ghi không còn tồn tại trong thiệp này.');
+   $s[$collection]=$remaining;return $s;
+  });json_response(['message'=>$action==='wish-delete'?'Đã xóa lời chúc.':'Đã xóa phản hồi RSVP.']);
+ }
  if(in_array($action,['rsvp','wish'],true)){
   if(!empty($in['website']))throw new InvalidArgumentException('Yêu cầu không hợp lệ.');
   $name=clean_text($in['name']??'',160);$message=clean_text($in['message']??'',2000);
@@ -75,7 +85,8 @@ try {
     $transport=$in['attending']&&($in['transport']??false)===true;
     $address=$transport?clean_text($in['pickupAddress']??'',1000):'';$phone=$transport?clean_text($in['phone']??'',40):'';
     $pickup=$transport?filter_var($in['pickupCount']??null,FILTER_VALIDATE_INT):0;
-    if($transport&&($address===''||!preg_match('/^[+0-9() .-]{8,25}$/D',$phone)||$pickup===false||$pickup<1||$pickup>$count))throw new InvalidArgumentException('Điền địa chỉ đón, số điện thoại hợp lệ và số người đón không vượt số người tham dự.');
+    if($transport&&($address===''||!preg_match('/^[+0-9() .-]{8,25}$/D',$phone)))throw new InvalidArgumentException('Điền địa chỉ đón và số điện thoại liên lạc hợp lệ.');
+    if($transport&&($pickup===false||$pickup<1||is_bool($in['pickupCount']??null)))throw new InvalidArgumentException('Số người đón phải là số nguyên lớn hơn hoặc bằng 1.');
     $entry+=['attending'=>$in['attending'],'count'=>$in['attending']?$count:0,'transport'=>$transport,'pickupAddress'=>$address,'pickupCount'=>$pickup,'phone'=>$phone];
     $updated=false;if($guest)foreach($s['responses'] as $i=>$r)if(($r['guestId']??null)===$guest['id']){$entry['id']=$r['id'];$s['responses'][$i]=$entry;$updated=true;break;}
     if(!$updated)$s['responses'][]=$entry;
