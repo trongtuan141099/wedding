@@ -17,7 +17,9 @@ try{
  if(function_exists('imagefilter'))imagefilter($canvas,IMG_FILTER_BRIGHTNESS,5);
  $paper=imagecolorallocate($canvas,255,250,240);imagefilledrectangle($canvas,0,518,1199,629,$paper);
  $font=__DIR__.'/assets/fonts/PlayfairDisplay.ttf';$white=imagecolorallocate($canvas,31,58,37);$cream=imagecolorallocate($canvas,81,98,73);
- $names=explode(' ♥ ',$meta['names'],2);$names=array_map(fn($name)=>social_limit($name,50),$names);$size=47;
+ // The bundled Latin font keeps the original names on the image; Japanese content is in HTML metadata.
+ $imageNames=$meta['names'];if(wedding_language()==='jp'&&preg_match('/[\x{3040}-\x{30ff}\x{3400}-\x{9fff}]/u',$imageNames)){$b=$s['config']['basic'];$imageNames=$b['order']==='bride'?$b['brideShort'].' ♥ '.$b['groomShort']:$b['groomShort'].' ♥ '.$b['brideShort'];}
+ $names=explode(' ♥ ',$imageNames,2);$names=array_map(fn($name)=>social_limit($name,50),$names);$size=47;
  do{$boxes=array_map(fn($name)=>imagettfbbox($size,0,$font,$name),$names);$widths=array_map(fn($box)=>$box[2]-$box[0],$boxes);$total=array_sum($widths)+58;if($total<=1060||$size<=23)break;$size--;}while(true);
  $left=(int)((1200-$total)/2);imagettftext($canvas,$size,0,$left,573,$white,$font,$names[0]);
  // Draw a heart instead of relying on a symbol glyph absent in some serif fonts.
@@ -25,7 +27,7 @@ try{
  imagefilledellipse($canvas,$cx-8,$cy-6,23,23,$white);imagefilledellipse($canvas,$cx+8,$cy-6,23,23,$white);
  imagefilledpolygon($canvas,[$cx-19,$cy-2,$cx+19,$cy-2,$cx,$cy+20],3,$white);
  imagettftext($canvas,$size,0,$left+$widths[0]+58,573,$white,$font,$names[1]??'');
- $date=$meta['date'];$box=imagettfbbox(21,0,$font,$date);imagettftext($canvas,21,0,(int)((1200-($box[2]-$box[0]))/2),613,$cream,$font,$date);
+ $date=wedding_language()==='jp'?str_replace('-','.',$s['config']['reception']['date']):$meta['date'];$box=imagettfbbox(21,0,$font,$date);imagettftext($canvas,21,0,(int)((1200-($box[2]-$box[0]))/2),613,$cream,$font,$date);
  header('Content-Type: image/jpeg');header('Content-Disposition: inline; filename="wedding-preview.jpg"');
  imagejpeg($canvas,null,95);imagedestroy($canvas);
 }catch(InvalidArgumentException $ex){http_response_code(404);exit;}

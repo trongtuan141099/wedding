@@ -1,5 +1,13 @@
 # Triển khai trên cPanel
 
+## Cập nhật ngôn ngữ Việt/Nhật
+
+Sau khi pull, phải có cả language.php và i18n.js cùng các tệp PHP/CSS/JS mới. Không cần chạy sync-template.php
+chỉ để thêm ngôn ngữ: các thiết lập Nhật tự bổ sung, giữ nội dung Việt và dữ liệu khách.
+Trong quản trị, điền mục Nội dung tiếng Nhật và các trường Nhật ở Lễ/Lịch trình/Hộp quà.
+Khi bấm Chia sẻ hoặc vào Link mời cá nhân, chọn Tiếng Việt (vn) hoặc 日本語 (jp).
+Link thêm `lang=vn` hoặc `lang=jp`; không đổi slug hay token khách. Tham số ngôn ngữ không cần URL rewrite.
+
 ## Yêu cầu
 
 Apache 2.4/LiteSpeed áp dụng `.htaccess`, PHP tối thiểu 8.0; nên dùng phiên bản từ 8.2 còn được hosting hỗ trợ.

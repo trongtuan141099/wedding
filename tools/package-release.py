@@ -40,7 +40,7 @@ for config in configs:
 source_names = ['index.php', 'admin.php', 'style.css', 'script.js', 'studio.css',
                 'studio.js', 'experience.js', 'invitation.css', 'invitation.js',
                 'studio-api.php', 'bootstrap.php', 'api.php', 'defaults.php', 'public-template.php',
-                'account.php', 'social.php', 'social-image.php',
+                'account.php', 'social.php', 'social-image.php', 'language.php', 'i18n.js',
                 'assets/fonts/PlayfairDisplay.ttf', 'assets/fonts/OFL.txt',
                 '.htaccess', '.user.ini', 'README.md', 'DEPLOY.md',
                 'tools/.htaccess', 'tools/sync-template.php', 'tools/fix-permissions.sh',

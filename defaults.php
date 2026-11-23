@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 return [
+ 'japanese'=>['groom'=>'','bride'=>'','groomShort'=>'','brideShort'=>'','greeting'=>'私たちの結婚式へようこそ','heroCaption'=>'愛はいつまでも','envelopeTitle'=>'結婚式のご招待','envelopeTagline'=>'永遠へと続く、ふたりのはじまり','heroTagline'=>'ひとつの約束、一生の愛','albumQuote'=>'どの恋の物語も素敵だけれど、私たちの物語がいちばん好き。','giftMessage'=>'皆さまのお気持ちが、私たちにとって何よりの贈り物です。','footerTitle'=>'ありがとうございます','footerMessage'=>'皆さまにお越しいただけることが、私たちと家族にとって何よりの喜びです。','announcement'=>'このたび私たちは結婚することになりました。皆さまと喜びを分かち合えましたら幸いです。','ceremoniesTitle'=>'挙式のご案内','receptionType'=>'結婚披露宴','receptionTitle'=>'ふたりの大切な日','venue'=>'','address'=>'','groomAddress'=>'','brideAddress'=>'','rsvpDescription'=>'ご出席いただけましたら幸いです。準備のため、ご出欠をお知らせください。','dresscodeDescription'=>'お祝いのひとときを、心地よい装いでご一緒に。','guestbookTitle'=>'お祝いのメッセージ','sharingTitle'=>'','sharingDescription'=>''],
  'wording'=>['envelopeTitle'=>'THIỆP MỜI CHUNG ĐÔI','envelopeTagline'=>'MỘT KHỞI ĐẦU CHO MÃI MÃI','heroTagline'=>'MỘT LỜI HẸN · MỘT ĐỜI THƯƠNG','albumQuote'=>'Every love story is beautiful, but ours is my favorite.','giftMessage'=>'Tình cảm của bạn là món quà quý giá nhất với chúng mình.','footerTitle'=>'Thank you!','footerMessage'=>'Sự hiện diện của bạn là niềm vinh hạnh và hạnh phúc của gia đình chúng mình.'],
  'basic'=>['greeting'=>'WELCOME TO OUR WEDDING','groom'=>'Thân Trọng Tuấn','bride'=>'Hà Thị Tuyết Trinh','groomShort'=>'Trọng Tuấn','brideShort'=>'Tuyết Trinh','groomRank'=>'Thứ Nam','brideRank'=>'Thứ Nữ','order'=>'groom'],
  'hero'=>['enabled'=>true,'image'=>'assets/cover.jpg','caption'=>'LOVE NEVER FAILS'],

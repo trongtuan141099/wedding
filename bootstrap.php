@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 date_default_timezone_set('Asia/Ho_Chi_Minh');
+require_once __DIR__.'/language.php';
 define('DATA_DIR',getenv('WEDDING_DATA_DIR')?:__DIR__.'/data');
 const PREFIX = "<?php exit; ?>\n";
 if (!is_dir(DATA_DIR) && !mkdir(DATA_DIR,0750,true)) throw new RuntimeException('Không thể tạo thư mục data.');
@@ -15,8 +16,8 @@ header('X-Frame-Options: SAMEORIGIN');
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src 'self' https://www.google.com; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'");
 function defaults(): array { return require __DIR__.'/defaults.php'; }
 function initial_state(): array {
- $seed=require __DIR__.'/public-template.php';$seed['config']=upgrade_config($seed['config']);
- foreach($seed['cards'] as &$card)$card['config']=upgrade_config($card['config']);unset($card);
+ $seed=require __DIR__.'/public-template.php';$seed['config']=validate_config($seed['config']);
+ foreach($seed['cards'] as &$card)$card['config']=validate_config($card['config']);unset($card);
  return $seed;
 }
 /** One lock protects read/modify/write, including concurrent public submissions. */
@@ -66,7 +67,7 @@ function guest_for(array $s): ?array {
 }
 function public_card_url(string $id): string {$meta=store_state()['cardMeta'][$id];return 'index.php?i='.rawurlencode($meta['slug']);}
 function e(string $s): string { return htmlspecialchars($s,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8'); }
-function json_response(array $v,int $code=200): void {http_response_code($code);header('Content-Type: application/json; charset=utf-8');echo json_encode($v,JSON_UNESCAPED_UNICODE|JSON_HEX_TAG);exit;}
+function json_response(array $v,int $code=200): void {http_response_code($code);header('Content-Type: application/json; charset=utf-8');echo json_encode(localized_response($v),JSON_UNESCAPED_UNICODE|JSON_HEX_TAG);exit;}
 function token(): string {return $_SESSION['csrf']??=bin2hex(random_bytes(32));}
 function csrf(): void {if(!hash_equals(token(),$_SERVER['HTTP_X_CSRF_TOKEN']??$_POST['csrf']??'')) json_response(['error'=>'Phiên đã hết hạn. Vui lòng tải lại trang.'],403);}
 function password_hash_config(): string {return getenv('WEDDING_ADMIN_PASSWORD_HASH') ?: (is_file(DATA_DIR.'/credentials.php') ? (string)(require DATA_DIR.'/credentials.php') : '');}
@@ -89,7 +90,7 @@ function validate_config(array $input): array {
     if(!is_array($v)||array_values($v)!==$v||count($v)>40)throw new InvalidArgumentException('Danh sách tối đa 40 mục.');
     $v=array_map(function($row)use($section){
      if(in_array($section,['gallery','dresscode'],true))return clean_text($row,1000);
-     $keys= match($section){'ceremonies'=>['title','date','time','venue','address','mapUrl'],'timeline'=>['time','title','description'],'banks'=>['label','bank','number','holder','qr'],default=>[]};
+     $keys= match($section){'ceremonies'=>['title','date','time','venue','address','mapUrl','titleJp','venueJp','addressJp'],'timeline'=>['time','title','description','titleJp','descriptionJp'],'banks'=>['label','bank','number','holder','qr','labelJp'],default=>[]};
      if(!is_array($row))throw new InvalidArgumentException('Mục không hợp lệ.');$clean=[];
      foreach($keys as $k){$clean[$k]=clean_text($row[$k]??'');if(in_array($k,['qr','mapUrl'],true)&&!asset_url($clean[$k]))throw new InvalidArgumentException('Chỉ hỗ trợ URL HTTPS hoặc tệp đã tải lên.');}
      return $clean;

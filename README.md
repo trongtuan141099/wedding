@@ -18,6 +18,19 @@ Chạy trực tiếp trên Apache 2.4/LiteSpeed; không cần Composer, Node, My
 - Mục Nội dung chữ trên thiệp cho phép sửa tiêu đề phong bì, lời mở, lời hẹn, trích dẫn album,
   lời nhắn quà mừng và lời cảm ơn; để trống để bỏ chữ. Dữ liệu cũ tự bổ sung các trường mới.
 - Ảnh chia sẻ sáng rõ, tên/ngày nằm trên dải nền kem thay cho lớp phủ đen.
+- Bấm số tài khoản để sao chép, có cách dự phòng trên HTTP hoặc trình duyệt chặn Clipboard API.
+- Link tiếng Việt `?i=trongtuan-tuyettrinh&lang=vn`, tiếng Nhật `?i=trongtuan-tuyettrinh&lang=jp`.
+  Chọn ngôn ngữ khi chia sẻ hoặc xuất link khách; tên khách và mã mời vẫn được giữ nguyên.
+
+## Tiếng Việt và tiếng Nhật
+
+Không truyền lang thì dùng tiếng Việt. Link lang=jp dùng nhãn, lịch, form và nội dung chia sẻ tiếng Nhật;
+người nhận có thể đổi ngôn ngữ bằng nút Tiếng Việt / 日本語 trên thiệp. Thời gian sự kiện vẫn theo giờ Việt Nam.
+Trong quản trị, mục **Nội dung tiếng Nhật** lưu bản dịch riêng, không thay nội dung tiếng Việt.
+Tên và địa chỉ để trống sẽ giữ bản gốc. Các mục lễ, timeline và tên hộp quà có trường Nhật riêng;
+nội dung tùy chỉnh chưa dịch, tên ngân hàng và lời chúc của khách được giữ nguyên, không gửi qua dịch vụ dịch tự động.
+Link khách mời và CSV có bộ chọn ngôn ngữ. Hãy nhập bản dịch cho thông tin riêng trước khi gửi khách Nhật.
+Ảnh chia sẻ giữ tên gốc Latin nếu tên Nhật có ký tự ngoài font ảnh, ngày dùng định dạng số; metadata là tiếng Nhật.
 
 ## Cài đặt
 
@@ -85,6 +98,7 @@ Node chỉ cần khi kiểm tra cú pháp JavaScript.
 
 ```powershell
 python tests/run-tests.py
+node tests/clipboard-smoke.js
 python tools/package-release.py --php D:/xampp/php/php.exe
 ```
 

@@ -1,5 +1,5 @@
 Options -Indexes
 DirectoryIndex index.php
-<FilesMatch "^\.|^(defaults|bootstrap|studio-api|account|social|public-template)\.php$|\.(md|lock|log|zip|ps1|py)$">
+<FilesMatch "^\.|^(defaults|bootstrap|studio-api|account|social|language|public-template)\.php$|\.(md|lock|log|zip|ps1|py)$">
 Require all denied
 </FilesMatch>

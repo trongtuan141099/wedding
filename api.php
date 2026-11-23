@@ -6,7 +6,7 @@ $action=$_GET['action']??'config';
 try {
  if($_SERVER['REQUEST_METHOD']==='GET'){
   $s=state();
-  if($action==='config')json_response(['config'=>$s['config'],'revision'=>$s['revision'],'wishes'=>public_wishes($s)]);
+  if($action==='config')json_response(['config'=>localized_config($s['config']),'revision'=>$s['revision'],'wishes'=>public_wishes($s)]);
   require_admin();
   if($action==='catalog'){ $root=store_state();json_response(['cards'=>$root['cardMeta'],'current'=>card_id($root)]); }
   if($action==='invitees')json_response(['invitees'=>$s['invitees'],'publicUrl'=>public_card_url(card_id())]);

@@ -35,7 +35,7 @@ function mount({config:c,opened,boot:context=boot}){
   }
   const reception=$('.reception-section'),rsvp=$('.rsvp-section'),venue=$('.venue-card');
   if(reception&&rsvp)reception.after(rsvp);
-  if(venue){const section=document.createElement('section');section.className='wedding-section venue-section';const heading=document.createElement('h2');heading.textContent=c.reception.type+' sẽ tổ chức tại';section.append(heading,venue);(rsvp||reception).after(section);}
+  if(venue){const section=document.createElement('section');section.className='wedding-section venue-section';const heading=document.createElement('h2');heading.textContent=boot.language==='jp'?'会場のご案内':c.reception.type+' sẽ tổ chức tại';section.append(heading,venue);(rsvp||reception).after(section);}
   const countdown=$('#countdown'),calendarSlot=$('#wedding-calendar-slot');if(countdown&&calendarSlot)calendarSlot.before(countdown);
  }
  // Native radios retain keyboard and screen-reader support; the original select
@@ -52,6 +52,7 @@ function mount({config:c,opened,boot:context=boot}){
   const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}});},{threshold:.06,rootMargin:'0px 0px -18px 0px'});
   $$('.wedding-section').forEach(section=>{section.classList.add('section-enter');observer.observe(section);});observers.push(observer);
  }
+ window.WeddingLanguage?.translate(document.body);
  dispose=()=>{controller.abort();observers.forEach(o=>o.disconnect());};
 }
 document.addEventListener('wedding:render',e=>mount(e.detail));

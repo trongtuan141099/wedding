@@ -4,14 +4,16 @@
 const initial=JSON.parse(document.getElementById('boot').textContent);if(initial.mode!=='invitation')return;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const t=value=>window.WeddingLanguage?.t(value)??value;
+const locale=initial.language==='jp'?'ja-JP':'vi-VN';
 let cleanup=()=>{},wishes=initial.wishes||[];
 document.addEventListener('wedding:render',e=>mount(e.detail));
 function calendar(date){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return '';
  const [year,month,day]=date.split('-').map(Number),first=new Date(Date.UTC(year,month-1,1)),offset=(first.getUTCDay()+6)%7,last=new Date(Date.UTC(year,month,0)).getUTCDate();
  const cells=Array.from({length:Math.ceil((offset+last)/7)*7},(_,i)=>{const n=i-offset+1;return n<1||n>last?'<td></td>':`<td ${n===day?'class="wedding-day"':''}><time datetime="${year}-${String(month).padStart(2,'0')}-${String(n).padStart(2,'0')}" ${n===day?'aria-label="Ngày cưới"':''}>${n}</time></td>`;});
- const weekday=new Date(date+'T12:00:00+07:00').toLocaleDateString('vi-VN',{weekday:'long',timeZone:'Asia/Ho_Chi_Minh'});
- return `<div class="wedding-calendar"><span class="calendar-clip" aria-hidden="true"><svg viewBox="0 0 24 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 44V11a7 7 0 0 1 14 0v38a10 10 0 0 1-20 0V16a4 4 0 0 1 8 0v31a2 2 0 0 1-4 0V19"/></svg></span><div class="calendar-title"><span>${esc(weekday)}</span><strong>${String(day).padStart(2,'0')}.${String(month).padStart(2,'0')}.${year}</strong><small>NGÀY CHÚNG MÌNH CHUNG ĐÔI</small></div><table aria-label="Lịch ngày cưới"><caption>Tháng ${month} · ${year}</caption><thead><tr>${['T2','T3','T4','T5','T6','T7','CN'].map(d=>'<th scope="col">'+d+'</th>').join('')}</tr></thead><tbody>${Array.from({length:cells.length/7},(_,i)=>'<tr>'+cells.slice(i*7,i*7+7).join('')+'</tr>').join('')}</tbody></table><p>♡ Một ngày để nhớ, một đời để thương.</p></div>`;
+ const weekday=new Date(date+'T12:00:00+07:00').toLocaleDateString(locale,{weekday:'long',timeZone:'Asia/Ho_Chi_Minh'});
+ return `<div class="wedding-calendar"><span class="calendar-clip" aria-hidden="true"><svg viewBox="0 0 24 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 44V11a7 7 0 0 1 14 0v38a10 10 0 0 1-20 0V16a4 4 0 0 1 8 0v31a2 2 0 0 1-4 0V19"/></svg></span><div class="calendar-title"><span>${esc(weekday)}</span><strong>${String(day).padStart(2,'0')}.${String(month).padStart(2,'0')}.${year}</strong><small>NGÀY CHÚNG MÌNH CHUNG ĐÔI</small></div><table aria-label="Lịch ngày cưới"><caption>${initial.language==='jp'?year+'年'+month+'月':'Tháng '+month+' · '+year}</caption><thead><tr>${(initial.language==='jp'?['月','火','水','木','金','土','日']:['T2','T3','T4','T5','T6','T7','CN']).map(d=>'<th scope="col">'+d+'</th>').join('')}</tr></thead><tbody>${Array.from({length:cells.length/7},(_,i)=>'<tr>'+cells.slice(i*7,i*7+7).join('')+'</tr>').join('')}</tbody></table><p>♡ Một ngày để nhớ, một đời để thương.</p></div>`;
 }
 function mount({config:c,opened,boot=initial}){
  cleanup();const controller=new AbortController(),signal=controller.signal,timers=[],observers=[];let raf=0,auto=false,lastFrame=0,position=window.scrollY;
@@ -21,7 +23,7 @@ function mount({config:c,opened,boot=initial}){
  document.documentElement.style.setProperty('--text-scale',String(c.theme.textScale));document.documentElement.style.setProperty('--name-scale',String(c.theme.nameScale));
  const card=$('.wedding-card');if(!card)return;
  if(c.theme.template==='editorial'&&!$('.hero-portrait img'))$('.wedding-hero').style.background=c.theme.color;
- if(boot.guest){const greeting=document.createElement('div');greeting.className='personal-invitation';greeting.innerHTML=`<span class="wedding-kicker">TRÂN TRỌNG KÍNH MỜI</span><h2>${esc(boot.guest.salutation)} <strong>${esc(boot.guest.name)}</strong></h2><p>Đến chung vui trong ngày hạnh phúc của chúng mình.</p>`;$('.family-section').prepend(greeting);}
+ if(boot.guest){const greeting=document.createElement('div');greeting.className='personal-invitation';greeting.innerHTML=`<span class="wedding-kicker">TRÂN TRỌNG KÍNH MỜI</span><h2>${initial.language==='jp'?'':esc(boot.guest.salutation)} <strong>${esc(boot.guest.name)}${initial.language==='jp'?' 様':''}</strong></h2><p>Đến chung vui trong ngày hạnh phúc của chúng mình.</p>`;$('.family-section').prepend(greeting);}
  if(c.experience.calendar&&c.reception.enabled&&c.reception.date){$('#wedding-calendar-slot')?.insertAdjacentHTML('beforeend',calendar(c.reception.date));}
  $$('.wedding-section').forEach((s,i)=>{s.dataset.sectionNumber=String(i+1).padStart(2,'0');});
  const rsvp=$('[data-public-form="rsvp"]');
@@ -44,7 +46,7 @@ function mount({config:c,opened,boot=initial}){
   function warm(i){const img=imageAt(i);img.loading='eager';img.decoding='async';return img.decode?img.decode().catch(()=>{}):Promise.resolve();}
   function arrange(){photos.forEach((el,i)=>{let d=i-photo;if(d>n/2)d-=n;if(d< -n/2)d+=n;el.style.setProperty('--offset',String(d));el.style.setProperty('--abs-offset',String(Math.abs(d)));el.dataset.active=String(d===0);el.style.zIndex=String(20-Math.abs(d));el.style.willChange=Math.abs(d)<=2?'transform':'auto';el.style.opacity=Math.abs(d)>2?'0':String(Math.max(.18,1-Math.abs(d)*.36));el.style.visibility=Math.abs(d)>2?'hidden':'visible';el.tabIndex=d===0?0:-1;});counter.textContent=`${photo+1} / ${n}`;warm(photo);warm(photo+1);warm(photo-1);}
   function pause(){clearTimeout(galleryTimer);galleryTimer=null;progress?.cancel();progress=null;}
-  function updateButton(){play.textContent=wantsAuto?'Ⅱ':'▶';play.setAttribute('aria-label',wantsAuto?'Dừng tự chuyển ảnh':'Bật tự chuyển ảnh');play.setAttribute('aria-pressed',String(wantsAuto));play.disabled=reduced||!!boot.preview||n<2;}
+  function updateButton(){play.textContent=wantsAuto?'Ⅱ':'▶';play.setAttribute('aria-label',wantsAuto?t('Dừng tự chuyển ảnh'):t('Bật tự chuyển ảnh'));play.setAttribute('aria-pressed',String(wantsAuto));play.disabled=reduced||!!boot.preview||n<2;}
   function schedule(delay=period){
    pause();updateButton();
    if(!wantsAuto||!opened||boot.preview||reduced||n<2||!inView||hovered||document.hidden)return;
@@ -66,9 +68,9 @@ function mount({config:c,opened,boot=initial}){
   const dock=document.createElement('nav');dock.className='invitation-dock';dock.setAttribute('aria-label','Điều khiển thiệp');dock.innerHTML=`<button class="scroll-toggle" aria-pressed="false" aria-label="Bắt đầu tự cuộn">▶ <span>Tự cuộn</span></button>${c.guestbook.enabled?'<a href="#wish-anchor">♡ <span>Gửi lời chúc</span></a>':''}${c.rsvp.enabled?'<a href="#rsvp">✉ <span>Xác nhận</span></a>':''}${c.banks.enabled?'<a href="#gift-anchor">♧ <span>Quà mừng</span></a>':''}`;document.body.append(dock);
   $('.public-form[data-public-form="wish"]')?.closest('.wedding-section').setAttribute('id','wish-anchor');$('.gift-section')?.setAttribute('id','gift-anchor');
   const toggle=$('.scroll-toggle',dock);
-  function pause(){auto=false;cancelAnimationFrame(raf);toggle.setAttribute('aria-pressed','false');toggle.setAttribute('aria-label','Bắt đầu tự cuộn');toggle.innerHTML='▶ <span>Tự cuộn</span>';}
+  function pause(){auto=false;cancelAnimationFrame(raf);toggle.setAttribute('aria-pressed','false');toggle.setAttribute('aria-label',t('Bắt đầu tự cuộn'));toggle.innerHTML='▶ <span>'+t('Tự cuộn')+'</span>';}
   function tick(now){if(!auto)return;const dt=lastFrame?Math.min(now-lastFrame,50):0;lastFrame=now;position+=Number(c.experience.scrollSpeed)*dt/1000;window.scrollTo({top:position,behavior:'instant'});if(innerHeight+scrollY>=document.documentElement.scrollHeight-2){pause();return;}raf=requestAnimationFrame(tick);}
-  function start(){if($('#photo-dialog')?.open||$('input:focus,textarea:focus,select:focus'))return;auto=true;position=scrollY;lastFrame=0;toggle.setAttribute('aria-pressed','true');toggle.setAttribute('aria-label','Dừng tự cuộn');toggle.innerHTML='Ⅱ <span>Dừng cuộn</span>';raf=requestAnimationFrame(tick);}
+  function start(){if($('#photo-dialog')?.open||$('input:focus,textarea:focus,select:focus'))return;auto=true;position=scrollY;lastFrame=0;toggle.setAttribute('aria-pressed','true');toggle.setAttribute('aria-label',t('Dừng tự cuộn'));toggle.innerHTML='Ⅱ <span>'+t('Dừng cuộn')+'</span>';raf=requestAnimationFrame(tick);}
   toggle.addEventListener('click',()=>auto?pause():start(),{signal});
   let userInteracted=false;function userPause(){userInteracted=true;pause();}
   window.addEventListener('wheel',userPause,{passive:true,signal});window.addEventListener('touchstart',e=>{if(!e.target.closest('.scroll-toggle'))userPause();},{passive:true,signal});
@@ -82,9 +84,10 @@ function mount({config:c,opened,boot=initial}){
    bubble();const interval=setInterval(bubble,3700);observers.push(()=>clearInterval(interval));
   }
   if(c.guestbook.enabled){
-   const poll=setInterval(async()=>{if(document.hidden)return;try{const res=await fetch('api.php?action=config&card='+encodeURIComponent(boot.cardId));if(!res.ok)return;const result=await res.json();wishes=result.wishes||[];const list=$('.public-wishes');if(list)list.innerHTML=wishes.length?wishes.slice(-30).reverse().map(w=>`<blockquote><span>“</span><p>${esc(w.message)}</p><cite>— ${esc(w.name)}</cite></blockquote>`).join(''):'<p class="no-wishes">Hãy là người đầu tiên gửi lời chúc đến chúng mình ♡</p>';}catch{}},45000);observers.push(()=>clearInterval(poll));
+   const poll=setInterval(async()=>{if(document.hidden)return;try{const res=await fetch('api.php?lang='+encodeURIComponent(initial.language||'vn')+'&action=config&card='+encodeURIComponent(boot.cardId));if(!res.ok)return;const result=await res.json();wishes=result.wishes||[];const list=$('.public-wishes');if(list)list.innerHTML=wishes.length?wishes.slice(-30).reverse().map(w=>`<blockquote><span>“</span><p>${esc(w.message)}</p><cite>— ${esc(w.name)}</cite></blockquote>`).join(''):'<p class="no-wishes">'+t('Hãy là người đầu tiên gửi lời chúc đến chúng mình ♡')+'</p>';window.WeddingLanguage?.translate(list);}catch{}},45000);observers.push(()=>clearInterval(poll));
   }
  }
+ window.WeddingLanguage?.translate(document.body);
  cleanup=()=>{controller.abort();cancelAnimationFrame(raf);clearInterval(galleryTimer);timers.forEach(clearTimeout);observers.forEach(fn=>fn());$$('.invitation-dock,.wish-stream').forEach(el=>el.remove());};
 }
 mount({config:initial.config,opened:initial.preview,boot:initial});

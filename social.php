@@ -31,17 +31,18 @@ function social_can_render(array $source): bool {
  return function_exists('imagecreatetruecolor')&&function_exists('imagejpeg')&&function_exists('imagettftext')&&function_exists('imagettfbbox')&&function_exists($decoder)&&is_readable(__DIR__.'/assets/fonts/PlayfairDisplay.ttf');
 }
 function social_data(array $config,string $id): array {
+ $config=localized_config($config);$jp=wedding_language()==='jp';
  $b=$config['basic'];$order=$b['order']==='bride'?['bride','groom']:['groom','bride'];
  $names=implode(' ♥ ',array_map(fn($side)=>$b[$side.'Short'],$order));
  $title=social_limit($config['sharing']['title']?:$names,160);$r=$config['reception'];$date='';
- if($r['date']){$dt=DateTimeImmutable::createFromFormat('!Y-m-d',$r['date']);if($dt){$week=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];$date=$week[(int)$dt->format('w')].', '.$dt->format('d/m/Y');}}
+ if($r['date']){$dt=DateTimeImmutable::createFromFormat('!Y-m-d',$r['date']);if($dt){$week=$jp?['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日']:['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];$date=$jp?$dt->format('Y年n月j日').'（'.$week[(int)$dt->format('w')].'）':$week[(int)$dt->format('w')].', '.$dt->format('d/m/Y');}}
  $details=array_filter([$date,$r['time'],$r['venue'],$r['address']]);
- $description=social_limit($config['sharing']['description']?:'Thân mời quý khách đến dự '.mb_strtolower_fallback($r['type']).' của '.str_replace(' ♥ ',' & ',$names).($details?' | '.implode(' | ',$details):''),500);
+ $description=social_limit($config['sharing']['description']?:($jp?str_replace(' ♥ ',' & ',$names).'の'.$r['type'].'にご招待いたします。':'Thân mời quý khách đến dự '.mb_strtolower_fallback($r['type']).' của '.str_replace(' ♥ ',' & ',$names)).($details?' | '.implode(' | ',$details):''),500);
  $root=store_state();$slug=$root['cardMeta'][$id]['slug'];$source=social_source($config);
- $version=substr(hash('sha256',json_encode(['social-v3-light',$names,$title,$description,$r['date'],$source['src'],$config['sharing']['imagePosition'],$source['local']?filemtime($source['local']['path']):0],JSON_UNESCAPED_UNICODE)),0,16);
+ $version=substr(hash('sha256',json_encode(['social-v4-language',wedding_language(),$names,$title,$description,$r['date'],$source['src'],$config['sharing']['imagePosition'],$source['local']?filemtime($source['local']['path']):0],JSON_UNESCAPED_UNICODE)),0,16);
  $render=social_can_render($source);
- return ['title'=>$title,'names'=>$names,'description'=>$description,'date'=>$date,'canonical'=>social_absolute('index.php?i='.rawurlencode($slug),$config),
-  'image'=>$render?social_absolute('social-image.php?i='.rawurlencode($slug).'&v='.$version,$config):social_absolute($source['src'],$config),
+ return ['title'=>$title,'names'=>$names,'description'=>$description,'date'=>$date,'canonical'=>social_absolute('index.php?i='.rawurlencode($slug).($jp?'&lang=jp':''),$config),
+  'image'=>$render?social_absolute('social-image.php?i='.rawurlencode($slug).($jp?'&lang=jp':'').'&v='.$version,$config):social_absolute($source['src'],$config),
   'width'=>$render?1200:($source['local']['width']??0),'height'=>$render?630:($source['local']['height']??0),'mime'=>$render?'image/jpeg':($source['local']['mime']??''),'version'=>$version,'source'=>$source];
 }
 function mb_strtolower_fallback(string $value): string {return function_exists('mb_strtolower')?mb_strtolower($value,'UTF-8'):$value;}
